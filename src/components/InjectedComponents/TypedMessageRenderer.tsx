@@ -60,6 +60,8 @@ export const DefaultTypedMessageRenderer = React.memo(function DefaultTypedMessa
 export const DefaultTypedMessageTextRenderer = React.memo(function DefaultTypedMessageTextRenderer(
     props: TypedMessageRendererProps<TypedMessageText>,
 ) {
+    console.log('DEBUG: DefaultTypedMessageTextRenderer')
+    console.log(props)
     return renderWithMetadata(
         props,
         <Typography variant="body1" style={{ lineBreak: 'anywhere' }} data-testid="text_payload">
@@ -71,6 +73,7 @@ export const DefaultTypedMessageTextRenderer = React.memo(function DefaultTypedM
 export const DefaultTypedMessageImageRenderer = React.memo(function DefaultTypedMessageImageRenderer(
     props: TypedMessageRendererProps<TypedMessageImage>,
 ) {
+    console.log(props.message.content)
     return renderWithMetadata(
         props,
         <Typography variant="body1" style={{ lineBreak: 'anywhere' }} data-testid="text_payload">

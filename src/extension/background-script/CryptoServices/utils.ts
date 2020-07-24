@@ -20,7 +20,6 @@ import type { RedPacketJSONPayload } from '../../../plugins/Wallet/database/type
 import { Result, Err, Ok } from 'ts-results'
 import { RedPacketMetaKey } from '../../../plugins/Wallet/RedPacketMetaKey'
 import { encodeArrayBuffer } from '../../../utils/type-transform/String-ArrayBuffer'
-import { isArrayBuffer } from 'lodash-es'
 import { imgType } from '@dimensiondev/stego-js/cjs/helper'
 
 export interface TypedMessageMetadata {
