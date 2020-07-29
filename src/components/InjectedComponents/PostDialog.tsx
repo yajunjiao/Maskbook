@@ -414,7 +414,7 @@ export function PostDialog(props: PostDialogProps) {
                         warningText: t('additional_post_box__encrypted_post_failed'),
                         shouldOpenPostDialog: false,
                     })
-                    activeUI.taskUploadShuffleToPostBox(imgToEncrypt, seed, {
+                    activeUI.taskUploadShuffledImageToPostBox(imgToEncrypt, seed, {
                         warningText: t('additional_post_box__shuffle_post_failed'),
                     })
                 } else {

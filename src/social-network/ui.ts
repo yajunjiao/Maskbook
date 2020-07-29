@@ -155,7 +155,7 @@ export interface SocialNetworkUITasks {
      * This function pastes the shuffled imaged to the post box
      * @param image - the shuffled image to upload
      */
-    taskUploadShuffleToPostBox(
+    taskUploadShuffledImageToPostBox(
         image: ArrayBuffer,
         seed: string,
         options: {

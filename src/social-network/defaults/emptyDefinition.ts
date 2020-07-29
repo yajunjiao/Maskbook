@@ -49,7 +49,7 @@ export const emptyDefinition: SocialNetworkUIDefinition = {
     taskPasteIntoBio() {},
     taskPasteIntoPostBox() {},
     taskUploadToPostBox() {},
-    taskUploadShuffleToPostBox() {},
+    taskUploadShuffledImageToPostBox() {},
     version: 1,
     gunNetworkHint: 'invalid-',
     taskStartImmersiveSetup() {},
