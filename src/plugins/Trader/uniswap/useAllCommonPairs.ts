@@ -67,22 +67,24 @@ export function useAllCommonPairs(tokenA?: Token, tokenB?: Token) {
                 : [],
         [[uniswapTokenA?.address, uniswapTokenB?.address].sort().join(), bases, basePairs, chainId],
     )
+
     const allPairs = useUniswapPairs(allPairCombinations as TokenPair[])
     // only pass along valid pairs, non-duplicated pairs
-    return useMemo(
-        () =>
-            Object.values(
-                allPairs
-                    // filter out invalid pairs
-                    .filter((result): result is [PairState.EXISTS, Pair] =>
-                        Boolean(result[0] === PairState.EXISTS && result[1]),
-                    )
-                    // filter out duplicated pairs
-                    .reduce<{ [pairAddress: string]: Pair }>((memo, [, current]) => {
-                        memo[current.liquidityToken.address] = memo[current.liquidityToken.address] ?? current
-                        return memo
-                    }, {}),
-            ),
-        [allPairs],
-    )
+    return [] as Pair[]
+    // return useMemo(
+    //     () =>
+    //         Object.values(
+    //             allPairs
+    //                 // filter out invalid pairs
+    //                 .filter((result): result is [PairState.EXISTS, Pair] =>
+    //                     Boolean(result[0] === PairState.EXISTS && result[1]),
+    //                 )
+    //                 // filter out duplicated pairs
+    //                 .reduce<{ [pairAddress: string]: Pair }>((memo, [, current]) => {
+    //                     memo[current.liquidityToken.address] = memo[current.liquidityToken.address] ?? current
+    //                     return memo
+    //                 }, {}),
+    //         ),
+    //     [allPairs],
+    // )
 }

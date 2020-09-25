@@ -1,12 +1,25 @@
+import { useMemo } from 'react'
 import type { Contract } from 'web3-eth-contract'
+import type { AbiOutput } from 'web3-utils'
 import { useMulticallContract } from '../contracts/useMulticallContract'
-import { useConstant } from './useConstant'
-import { CONSTANTS } from '../constants'
-import { useState, useCallback, useMemo } from 'react'
 import { useAsync } from 'react-use'
 import { nonFunctionalWeb3 } from '../web3'
-import { useERC20TokenContract } from '../contracts/useERC20TokenContract'
-import type { Erc20 } from '../../contracts/splitter/ERC20'
+import { decodeOutputString } from '../helpers'
+
+function decodeAggreateReturnData(data: string[], outputAbis: AbiOutput[]) {
+    return data.map((x) => {
+        try {
+            return {
+                error: null,
+                data: decodeOutputString(nonFunctionalWeb3, outputAbis, x),
+            }
+        } catch (error) {
+            return {
+                error: error as Error,
+            }
+        }
+    })
+}
 
 //#region useMulticallCallback
 interface Call {
@@ -14,65 +27,22 @@ interface Call {
     callData: string
 }
 
-export enum MulticalStateType {
-    UNKNOWN,
-    PENDING,
-    SUCCEED,
-    FAILED,
-}
-
-export type MulticalState =
-    | {
-          type: MulticalStateType.UNKNOWN
-      }
-    | {
-          type: MulticalStateType.PENDING
-      }
-    | {
-          type: MulticalStateType.SUCCEED
-          results: string[]
-      }
-    | {
-          type: MulticalStateType.FAILED
-          error: Error
-      }
-
 /**
  * The basic hook for fetching data from Multicall contract
  * @param calls
  */
-export function useMulticallCallback(calls: Call[]) {
-    const multicallContract = useMulticallContract()
-    const [multicallState, setMulticallState] = useState<MulticalState>({
-        type: MulticalStateType.UNKNOWN,
-    })
-    const multicallCallback = useCallback(async () => {
-        if (!multicallState) {
-            setMulticallState({
-                type: MulticalStateType.UNKNOWN,
-            })
-            return
-        }
-        try {
-            setMulticallState({
-                type: MulticalStateType.PENDING,
-            })
-            const { returnData } = await multicallContract.methods
-                .aggregate(calls as { target: string; callData: string }[])
-                .call()
+export function useMulticallAggregate(calls: Call[]) {
+    console.log('DEBUG: useMulticall')
+    console.log(calls)
 
-            setMulticallState({
-                type: MulticalStateType.SUCCEED,
-                results: returnData,
-            })
-        } catch (error) {
-            setMulticallState({
-                type: MulticalStateType.FAILED,
-                error,
-            })
-        }
+    const multicallContract = useMulticallContract()
+    return useAsync(async () => {
+        if (calls.length === 0) return []
+        const { returnData } = await multicallContract.methods
+            .aggregate(calls as { target: string; callData: string }[])
+            .call()
+        return returnData
     }, [calls])
-    return [multicallState, multicallCallback]
 }
 //#endregion
 
@@ -81,27 +51,35 @@ export function useSingleContractMultipleData<T extends Contract, M extends keyo
     name: string,
     callDatas: Parameters<T['methods'][M]>[],
 ) {
-    const calls = useMemo(() => {
-        return callDatas.map((data) => ({
-            target: contract.options.address,
-            callData: contract.methods[name](...data).encodeABI() as string,
-        }))
-    }, [contract, name, callDatas])
-    return useMulticallCallback(calls)
+    const calls = useMemo(
+        () =>
+            callDatas.map((data) => ({
+                target: contract.options.address,
+                callData: contract.methods[name](...data).encodeABI() as string,
+            })),
+        [contract, name, callDatas],
+    )
+    const returned = useMulticallAggregate(calls)
+    const methodABI = contract.options.jsonInterface.find((x) => x.type === 'function' && x.name === name)
+    return decodeAggreateReturnData(returned.value ?? [], methodABI ? methodABI.outputs ?? [] : [])
 }
 
 export function useMutlipleContractSingleData<T extends Contract, M extends keyof T['methods']>(
     contracts: T[],
-    name: string,
+    name: M,
     callData: Parameters<T['methods'][M]>,
 ) {
-    const calls = useMemo(() => {
-        return contracts.map((contract) => ({
-            target: contract.options.address,
-            callData: contracts[0].methods[name](callData).encodeABI() as string,
-        }))
-    }, [contracts, name, callData])
-    return useMulticallCallback(calls)
+    const calls = useMemo(
+        () =>
+            contracts.map((contract) => ({
+                target: contract.options.address,
+                callData: contracts[0].methods[name](...callData).encodeABI() as string,
+            })),
+        [contracts, name, callData],
+    )
+    const returned = useMulticallAggregate(calls)
+    console.log('DEBUG: useMutlipleContractSingleData')
+    console.log(returned)
 }
 
 export function useMultipleContractMultipleData<T extends Contract, M extends keyof T['methods']>(
@@ -109,11 +87,13 @@ export function useMultipleContractMultipleData<T extends Contract, M extends ke
     name: string,
     callDatas: Parameters<T['methods'][M]>,
 ) {
-    const calls = useMemo(() => {
-        return contracts.map((contract, idx) => ({
-            target: contract.options.address,
-            callData: contracts[0].methods[name](callDatas[idx]).encodeABI() as string,
-        }))
-    }, [contracts, name, callDatas])
-    return useMulticallCallback(calls)
+    const calls = useMemo(
+        () =>
+            contracts.map((contract, idx) => ({
+                target: contract.options.address,
+                callData: contracts[0].methods[name](callDatas[idx]).encodeABI() as string,
+            })),
+        [contracts, name, callDatas],
+    )
+    return useMulticallAggregate(calls)
 }
