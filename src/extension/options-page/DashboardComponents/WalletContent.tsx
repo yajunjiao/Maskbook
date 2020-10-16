@@ -2,11 +2,12 @@ import React from 'react'
 import { Button, Typography, Box, IconButton, List, MenuItem } from '@material-ui/core'
 import { makeStyles, createStyles, Theme, ThemeProvider } from '@material-ui/core/styles'
 import { merge, cloneDeep, truncate } from 'lodash-es'
-import { WALLET_OR_PERSONA_NAME_MAX_LEN } from '../../../utils/constants'
 import AddIcon from '@material-ui/icons/Add'
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined'
 import MoreVertOutlinedIcon from '@material-ui/icons/MoreVertOutlined'
 import HistoryIcon from '@material-ui/icons/History'
 import { useModal, useSnackbarCallback } from '../DashboardDialogs/Base'
+import { WALLET_OR_PERSONA_NAME_MAX_LEN } from '../../../utils/constants'
 import {
     DashboardWalletAddTokenDialog,
     DashboardWalletHistoryDialog,
@@ -24,6 +25,8 @@ import { useMatchXS } from '../../../utils/hooks/useMatchXS'
 import type { WalletRecord } from '../../../plugins/Wallet/database/types'
 import { ProviderType, TokenDetailed } from '../../../web3/types'
 import { WalletAssetsTable } from './WalletAssetsTable'
+import { useRemoteControlledDialog } from '../../../utils/hooks/useRemoteControlledDialog'
+import { TransakMessageCenter } from '../../../plugins/Transak/messages'
 
 const walletContentTheme = (theme: Theme): Theme =>
     merge(cloneDeep(theme), {
@@ -116,6 +119,10 @@ export const WalletContent = React.forwardRef<HTMLDivElement, WalletContentProps
         </MenuItem>,
     )
 
+    //#region remote controlled buy dialog
+    const [, setBuyDialogOpen] = useRemoteControlledDialog(TransakMessageCenter, 'buyTokenDialogUpdated')
+    //#endregion
+
     return (
         <div className={classes.root} ref={ref}>
             <ThemeProvider theme={walletContentTheme}>
@@ -157,7 +164,7 @@ export const WalletContent = React.forwardRef<HTMLDivElement, WalletContentProps
                 />
             </ThemeProvider>
             {!xsMatched ? (
-                <Box className={classes.footer} display="flex" alignItems="center" justifyContent="space-between">
+                <Box className={classes.footer} display="flex" alignItems="center">
                     <Button
                         onClick={() =>
                             openWalletHistory({
@@ -173,6 +180,16 @@ export const WalletContent = React.forwardRef<HTMLDivElement, WalletContentProps
                         startIcon={<HistoryIcon />}
                         variant="text">
                         {t('activity')}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setBuyDialogOpen({
+                                open: true,
+                                address: wallet.address,
+                            })
+                        }}
+                        startIcon={<ShoppingCartOutlinedIcon />}>
+                        {t('buy_now')}
                     </Button>
                 </Box>
             ) : null}
