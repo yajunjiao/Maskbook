@@ -1,10 +1,9 @@
-import type Web3 from 'web3'
 import type { EventLog, TransactionReceipt } from 'web3-core'
 import Web3Utils, { AbiItem, AbiOutput } from 'web3-utils'
 import BigNumber from 'bignumber.js'
 import { CONSTANTS } from './constants'
 import { ChainId, EthereumTokenType, Token } from './types'
-import { unreachable } from '../utils/utils'
+import { nonFunctionalWeb3 } from './web3'
 
 export function isSameAddress(addrA: string, addrB: string) {
     return addrA.toLowerCase() === addrB.toLowerCase()
@@ -80,13 +79,13 @@ export function createERC20Token(
     }
 }
 
-export function decodeOutputString(web3: Web3, abis: AbiOutput[], output: string) {
-    if (abis.length === 1) return web3.eth.abi.decodeParameter(abis[0], output)
-    if (abis.length > 1) return web3.eth.abi.decodeParameters(abis, output)
+export function decodeOutputString(abis: AbiOutput[], output: string) {
+    if (abis.length === 1) return nonFunctionalWeb3.eth.abi.decodeParameter(abis[0], output)
+    if (abis.length > 1) return nonFunctionalWeb3.eth.abi.decodeParameters(abis, output)
     return
 }
 
-export function decodeEvents(web3: Web3, abis: AbiItem[], receipt: TransactionReceipt) {
+export function decodeEvents(abis: AbiItem[], receipt: TransactionReceipt) {
     // the topic0 for identifying which abi to be used for decoding the event
     const listOfTopic0 = abis.map((abi) => Web3Utils.keccak256(`${abi.name}(${abi.inputs?.map((x) => x.type).join()})`))
 
@@ -98,7 +97,11 @@ export function decodeEvents(web3: Web3, abis: AbiItem[], receipt: TransactionRe
         const inputs = abi?.inputs ?? []
         return {
             // more: https://web3js.readthedocs.io/en/v1.2.11/web3-eth-abi.html?highlight=decodeLog#decodelog
-            returnValues: web3.eth.abi.decodeLog(inputs, log.data, abi.anonymous ? log.topics : log.topics.slice(1)),
+            returnValues: nonFunctionalWeb3.eth.abi.decodeLog(
+                inputs,
+                log.data,
+                abi.anonymous ? log.topics : log.topics.slice(1),
+            ),
             raw: {
                 data: log.data,
                 topics: log.topics,

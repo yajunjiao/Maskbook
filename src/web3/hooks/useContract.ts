@@ -49,7 +49,7 @@ function createContract<T extends Contract>(from: string, address: string, ABI: 
                                     })}`,
                                 )
 
-                            return decodeOutputString(nonFunctionalWeb3, methodABI?.outputs ?? [], result)
+                            return decodeOutputString(methodABI?.outputs ?? [], result)
                         },
                         // don't add async keyword for this method because a PromiEvent was returned
                         send(config: TransactionConfig, callback?: (error: Error | null, hash?: string) => void) {
@@ -75,10 +75,10 @@ function createContract<T extends Contract>(from: string, address: string, ABI: 
                             const processor = (stage: Stage) => {
                                 switch (stage.type) {
                                     case StageType.RECEIPT:
-                                        stage.receipt.events = decodeEvents(nonFunctionalWeb3, eventABIs, stage.receipt)
+                                        stage.receipt.events = decodeEvents(eventABIs, stage.receipt)
                                         break
                                     case StageType.CONFIRMATION:
-                                        stage.receipt.events = decodeEvents(nonFunctionalWeb3, eventABIs, stage.receipt)
+                                        stage.receipt.events = decodeEvents(eventABIs, stage.receipt)
                                         break
                                 }
                                 return stage
