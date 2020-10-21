@@ -199,7 +199,6 @@
     "service_decode_image_payload_failed": "解码圖片失敗。",
     "service_unknown_payload": "不支援的訊息構造。或許您需要更新 Maskbook 版本了？",
     "service_username_invalid": "無效用戶名",
-    "set_as_default": "設為默認",
     "set_up_tip_or": "或者",
     "set_up_button_next": "繼續",
     "set_up_button_from_backup": "從備份還原",

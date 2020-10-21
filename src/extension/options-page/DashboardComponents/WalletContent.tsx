@@ -99,13 +99,7 @@ export const WalletContent = React.forwardRef<HTMLDivElement, WalletContentProps
     const [walletRename, , openWalletRename] = useModal(DashboardWalletRenameDialog)
     const [walletRedPacket, , openWalletRedPacket] = useModal(DashboardWalletRedPacketDetailDialog)
 
-    const setAsDefault = useSnackbarCallback(
-        () => Services.Plugin.invokePlugin('maskbook.wallet', 'setDefaultWallet', wallet!.address),
-        [wallet?.address],
-    )
-
     const [menu, openMenu] = useMenu(
-        <MenuItem onClick={setAsDefault}>{t('set_as_default')}</MenuItem>,
         <MenuItem onClick={() => openWalletShare({ wallet })}>{t('share')}</MenuItem>,
         <MenuItem onClick={() => openWalletRename({ wallet })}>{t('rename')}</MenuItem>,
         wallet.provider === ProviderType.Maskbook ? (

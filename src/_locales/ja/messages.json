@@ -199,7 +199,6 @@
     "service_decode_image_payload_failed": "画像のデコードに失敗しました。",
     "service_unknown_payload": "投稿のバージョンが不明です。Maskbook のアップデートが必要かもしれません。",
     "service_username_invalid": "無効なユーザー名",
-    "set_as_default": "初期値に設定",
     "set_up_tip_or": "または",
     "set_up_button_next": "次へ",
     "set_up_button_from_backup": "バックアップから復元",

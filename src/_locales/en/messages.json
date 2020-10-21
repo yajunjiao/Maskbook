@@ -199,7 +199,6 @@
     "service_decode_image_payload_failed": "Decode image failed.",
     "service_unknown_payload": "Unknown post version. You may need to update Maskbook.",
     "service_username_invalid": "Invalid Username",
-    "set_as_default": "Set as Default",
     "set_up_tip_or": "or",
     "set_up_button_next": "Next",
     "set_up_button_from_backup": "Restore From Backup",
