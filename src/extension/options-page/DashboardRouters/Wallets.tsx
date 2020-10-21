@@ -26,6 +26,7 @@ import { useTokens } from '../../../plugins/Wallet/hooks/useToken'
 import { useTokensDetailedCallback } from '../../../web3/hooks/useTokensDetailedCallback'
 import { WalletContent } from '../DashboardComponents/WalletContent'
 import { EthereumStatusBar } from '../../../web3/UI/EthereumStatusBar'
+import { Multicall } from '../../../web3/UI/Mutlicall'
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -160,6 +161,7 @@ export default function DashboardWalletsRouter() {
                     <EthereumStatusBar
                         BoxProps={{ justifyContent: 'flex-end', flexWrap: 'reverse', flexDirection: 'row-reverse' }}
                     />
+                    <Multicall />
                 </div>
                 <div className={classes.content}>
                     <div className={classes.wrapper}>
