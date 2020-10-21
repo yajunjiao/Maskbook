@@ -1,8 +1,8 @@
-import { rgbToHex, useTheme } from '@material-ui/core'
 import { useMemo } from 'react'
+import { rgbToHex, useTheme } from '@material-ui/core'
 import TransakSDK, { TransakSDKConfig } from '@transak/transak-sdk'
 import stringify from 'json-stable-stringify'
-import { TRANSAK_API_KEY_PRODUCTION, TRANSAK_API_KEY_STAGING } from '../constants'
+import { TRANSAK_EMAIL_ADDRRESS, TRANSAK_API_KEY_PRODUCTION, TRANSAK_API_KEY_STAGING } from '../constants'
 
 export function useTransak(config?: Partial<TransakSDKConfig>) {
     const theme = useTheme()
@@ -12,7 +12,7 @@ export function useTransak(config?: Partial<TransakSDKConfig>) {
                 apiKey: process.env.NODE_ENV === 'production' ? TRANSAK_API_KEY_PRODUCTION : TRANSAK_API_KEY_STAGING,
                 environment: process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'STAGING',
                 defaultCryptoCurrency: 'ETH',
-                email: 'info@dimension.im',
+                email: TRANSAK_EMAIL_ADDRRESS,
                 fiatCurrency: 'USD',
                 hostURL: window.location.origin,
                 redirectURL: window.location.origin,
